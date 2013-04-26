@@ -16,8 +16,8 @@ from twisted.internet.utils import getProcessOutputAndValue
 from twisted.python.filepath import FilePath
 from twisted.internet.defer import DeferredLock, gatherResults
 
-chbranch = expanduser("~/Projects/Divmod/trunk/Combinator/bin/chbranch")
-unbranch = expanduser("~/Projects/Divmod/trunk/Combinator/bin/unbranch")
+chbranch = expanduser("~/divmod/Combinator/bin/chbranch")
+unbranch = expanduser("~/divmod/Combinator/bin/unbranch")
 
 
 def getProcessOutput(command, argv, env):

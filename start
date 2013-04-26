@@ -1,0 +1,9 @@
+#!/bin/bash
+
+PYTHONPATH=$HOME/divmod/Combinator:$PYTHONPATH
+
+~pypy/bin/twistd \
+    --logfile ~/log/twistd.log \
+    --pidfile ~/run/twistd.pid \
+    --rundir ~/run/ \
+    web --personal --resource-script ~/config/diffresource/diffresource.py
