@@ -1,5 +1,4 @@
 
-from csv import reader
 from os.path import expanduser, exists
 from os import environ, close, mkdir
 from tempfile import mkstemp
@@ -16,9 +15,10 @@ from twisted.internet.utils import getProcessOutputAndValue
 from twisted.python.filepath import FilePath
 from twisted.internet.defer import DeferredLock, gatherResults
 
+from amptrac.client import connect, Client
+
 chbranch = expanduser("~/Projects/Divmod/trunk/Combinator/bin/chbranch")
 unbranch = expanduser("~/Projects/Divmod/trunk/Combinator/bin/unbranch")
-
 
 def getProcessOutput(command, argv, env):
     d = getProcessOutputAndValue(command, argv, env=env)
@@ -28,15 +28,6 @@ def getProcessOutput(command, argv, env):
         return out
     d.addBoth(massage)
     return d
-
-
-def csv(text):
-    content = iter(reader(text.splitlines()))
-    header = content.next()
-    rows = []
-    for entries in content:
-        rows.append(dict(zip(header, entries)))
-    return rows
 
 
 def htmlQuote(s):
@@ -74,16 +65,8 @@ class DiffContainer(object):
         Render links to L{DiffResource}s for all tickets up for review which
         have branches.
         """
-        location = self.trackerRoot + (
-            'query?'
-            'status=new&'
-            'status=assigned&'
-            'status=reopened&'
-            'branch=%21&'
-            'keywords=%7Ereview&'
-            'order=priority&'
-            'format=csv')
-        reviewTicketsWithBranch = getPage(location)
+        reviewTicketsWithBranch = connect(reactor)
+        reviewTicketsWithBranch.addCallback(Client.reviewTickets)
         def gotTickets(tickets):
             return self.pageTemplate % {
                 'tickets': ''.join([
@@ -93,7 +76,6 @@ class DiffContainer(object):
                     for ticket in tickets])}
         def ebRender(failure):
             failure.printTraceback(file=request)
-        reviewTicketsWithBranch.addCallback(csv)
         reviewTicketsWithBranch.addCallback(gotTickets)
         reviewTicketsWithBranch.addCallbacks(request.write, ebRender)
         reviewTicketsWithBranch.addCallback(lambda ignored: request.finish())
@@ -122,12 +104,10 @@ class DiffResource(object):
         request.setHeader('content-type', 'text/plain')
 
         # First find the branch for the ticket requested.
-        ticketFields = getPage(
-            self.trackerRoot + 'ticket/' + str(self.ticket) + '?format=csv')
-        ticketFields.addCallback(csv)
+        ticketFields = connect(reactor)
+        ticketFields.addCallback(Client.fetchTicket, self.ticket)
 
-        def gotFields(rows):
-            fields = rows[0]
+        def gotFields(fields):
             if fields['status'] == 'closed':
                 raise Exception("That ticket is closed.")
             return fields['branch'].split('/')[1]
