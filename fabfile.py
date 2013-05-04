@@ -4,7 +4,7 @@ Support for DNS service installation and management.
 
 from fabric.api import run, settings
 
-from braid import bazaar, cron
+from braid import bazaar, cron, git
 from braid.twisted import service
 
 # TODO: Move these somewhere else and make them easily extendable
@@ -21,9 +21,9 @@ class DiffResource(service.Service):
         self.bootstrap()
 
         with settings(user=self.serviceUser):
-            run('ln -nsf {}/diffresource/start {}/start'.format(self.configDir, self.binDir))
+            run('ln -nsf {}/start {}/start'.format(self.configDir, self.binDir))
             self.task_update()
-            cron.install(self.serviceUser, '{}/diffresource/crontab'.format(self.configDir))
+            cron.install(self.serviceUser, '{}/crontab'.format(self.configDir))
 
     def task_update(self):
         """
@@ -31,7 +31,7 @@ class DiffResource(service.Service):
         """
         with settings(user=self.serviceUser):
             # TODO: This is a temp location for testing
-            bazaar.branch('lp:~tom.prince/twisted-trac-integration/braided-diffresource', self.configDir)
+            git.branch('https://github.com/twisted-infra/diffresource', self.configDir)
             bazaar.branch('lp:divmod', '~/divmod')
             # TODO restart
 
