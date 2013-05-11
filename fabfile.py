@@ -21,7 +21,7 @@ class DiffResource(service.Service):
         self.bootstrap()
 
         with settings(user=self.serviceUser):
-            run('ln -nsf {}/start {}/start'.format(self.configDir, self.binDir))
+            run('/bin/ln -nsf {}/start {}/start'.format(self.configDir, self.binDir))
             self.task_update()
             cron.install(self.serviceUser, '{}/crontab'.format(self.configDir))
 
