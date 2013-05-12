@@ -1,21 +1,21 @@
 """
-Support for DNS service installation and management.
+Support for diffresource.
 """
 
 from fabric.api import run, settings
 
 from braid import bazaar, cron, git
 from braid.twisted import service
+from braid.tasks import addTasks
 
-# TODO: Move these somewhere else and make them easily extendable
 from braid import config
-_hush_pyflakes = [ config ]
+__all__ = [ 'config' ]
 
 
 class DiffResource(service.Service):
     def task_install(self):
         """
-        Install t-names, a Twisted Names based DNS server.
+        Install diffresource.
         """
         # Bootstrap a new service environment
         self.bootstrap()
@@ -30,10 +30,9 @@ class DiffResource(service.Service):
         Update config.
         """
         with settings(user=self.serviceUser):
-            # TODO: This is a temp location for testing
             git.branch('https://github.com/twisted-infra/diffresource', self.configDir)
             bazaar.branch('lp:divmod', '~/divmod')
-            # TODO restart
+            self.task_restart()
 
 
-globals().update(DiffResource('diffresource').getTasks())
+addTasks(globals(), DiffResource('diffresource').getTasks())
