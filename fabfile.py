@@ -31,7 +31,7 @@ class DiffResource(service.Service):
         """
         with settings(user=self.serviceUser):
             git.branch('https://github.com/twisted-infra/diffresource', self.configDir)
-            bazaar.branch('lp:divmod', '~/divmod')
+            bazaar.branch('lp:divmod.org', '~/divmod')
 
 
     def task_update(self):
