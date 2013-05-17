@@ -2,6 +2,7 @@
 
 export PYTHONPATH=$HOME/divmod/Combinator:$PYTHONPATH
 
+export COMBINATOR_PROJECTS=$HOME/Projects
 
 ~pypy/bin/twistd \
     --logfile ~/log/twistd.log \
