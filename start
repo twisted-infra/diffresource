@@ -8,4 +8,4 @@ export COMBINATOR_PROJECTS=$HOME/Projects
     --logfile ~/log/twistd.log \
     --pidfile ~/run/twistd.pid \
     --rundir ~/run/ \
-    web --personal --resource-script ~/config/diffresource.py
+    web --personal --resource-script ~/config/diffresource.rpy
