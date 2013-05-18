@@ -4,7 +4,7 @@ Support for diffresource.
 
 from fabric.api import run, settings
 
-from braid import bazaar, cron, git
+from braid import bazaar, cron, git, package
 from braid.twisted import service
 from braid.tasks import addTasks
 
@@ -19,6 +19,8 @@ class DiffResource(service.Service):
         """
         # Bootstrap a new service environment
         self.bootstrap()
+
+        package.install(['diffstat'])
 
         with settings(user=self.serviceUser):
             run('/bin/ln -nsf {}/start {}/start'.format(self.configDir, self.binDir))
