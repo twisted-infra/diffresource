@@ -25,6 +25,8 @@ class DiffResource(service.Service):
             self.update()
             cron.install(self.serviceUser, '{}/crontab'.format(self.configDir))
 
+            run('PYTHONPATH=~/divmod/Combinator COMBINATOR_PROJECTS=~/Projects ~/divmod/Combinator/bin/chbranch Twisted trunk svn://svn.twistedmatrix.com/svn/Twisted/trunk')
+
     def update(self):
         """
         Update config.
