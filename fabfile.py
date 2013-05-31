@@ -36,6 +36,8 @@ class DiffResource(service.Service):
         with settings(user=self.serviceUser):
             git.branch('https://github.com/twisted-infra/diffresource', self.configDir)
             bazaar.branch('lp:divmod.org', '~/divmod')
+            # We aren't using combinator for its path munging, so stop it from doing that.
+            run('/bin/rm -f ~/divmod/Combinator/sitecustomize.py*')
 
 
     def task_update(self):
